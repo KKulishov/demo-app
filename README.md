@@ -24,8 +24,22 @@ https://opentelemetry.io/docs/kubernetes/operator/automatic/
 ДЛя ns coroot разрешить вх. трафик для OTEL от ns  bookinfo 
 
 точки генерации траффика
-
-https://bookinfo-k8s-test.sovcombank.group/productpage
-
-https://bookinfo-k8s-test.sovcombank.group/api/v1/products/82344/reviews
 https://bookinfo-k8s-test.sovcombank.group/index.html
+https://bookinfo-k8s-test.sovcombank.group/productpage
+https://bookinfo-k8s-test.sovcombank.group/api/v1/products/82344/reviews
+https://bookinfo-k8s-test.sovcombank.group/api/v1/products/32
+https://bookinfo-k8s-test.sovcombank.group/api/v1/products/82344/ratings
+## redis
+https://bookinfo-k8s-test.sovcombank.group/redis-write
+https://bookinfo-k8s-test.sovcombank.group/redis-read
+## mysql 
+https://bookinfo-k8s-test.sovcombank.group/mysql-set
+https://bookinfo-k8s-test.sovcombank.group/mysql-read
+
+
+## todo add postgesql
+
+## todo add proxysql
+
+## todo тупикоый сервис к которому обращается сервис но он не отвечает 
+
