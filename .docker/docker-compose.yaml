@@ -1,0 +1,83 @@
+version: '3.7'
+
+networks:
+  dl_default:
+    external: true
+
+services:    
+  frontend:
+    build:
+      context: $PWD
+      dockerfile: .docker/productpage/Dockerfile
+    image: registry.sovcombank.group/s-devops/docker.io/istio/examples-bookinfo-productpage-v1:1.17.6
+    restart: always
+    ports:
+      - 9080
+    #command: ["tail -f Dockerfile"]
+    depends_on:
+      - redis
+    environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - VIRTUAL_PORT=9080
+      - HOST_REDIS
+      - REDIS_PASS
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_HOST
+    volumes:
+      - "${PWD}/.docker/productpage/productpage.py:/opt/microservices/productpage.py" 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.routers.frontend.rule=Host(`bookinfo.localhost`) || HostRegexp(`bookinfo.{ip:.*}.nip.io`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=9080"    
+      - "traefik.docker.network=dl_default"
+    networks:
+      dl_default: {}
+      default:
+        aliases:
+          - ${NETWORK_NAME}
+  redis:
+    image: redis:alpine
+    restart: always
+    command: "/bin/sh -c 'redis-server --requirepass WDywuquruWySnB' & echo 'echo never > /sys/kernel/mm/transparent_hugepage/enabled' > /etc/rc.local"
+    ports:
+      - 6379 
+  db:
+      image: mysql:5.7
+      container_name: ${COMPOSE_PROJECT_NAME}_db
+      restart: always
+      command: ['mysqld', '--character-set-server=utf8', '--collation-server=utf8_unicode_ci']
+      environment:
+          - MYSQL_DATABASE
+          - MYSQL_USER
+          - MYSQL_PASSWORD
+          - MYSQL_ROOT_PASSWORD
+          - LOCALTIME
+          - MYSQLD__innodb_flush_log_at_trx_commit
+          - MYSQLD__innodb_flush_method
+          - MYSQLD__transaction-isolation
+          - MYSQLD__sql_mode
+          - MYSQLD__character-set-server
+          - MYSQLD__collation-server
+          - MYSQLD__sort_buffer_size
+          - MYSQLD__innodb_buffer_pool_instances
+          - MYSQLD__innodb_buffer_pool_size
+          - MYSQLD__long_query_time
+          - MYSQLD__max_connections
+          - MYSQLD__max_heap_table_size
+          - MYSQLD__max_user_connections
+          - MYSQLD__read_rnd_buffer_size
+          - MYSQLD__query_cache_limit
+          - MYSQLD__table_open_cache
+          - MYSQLD__tmp_table_size
+          - MYSQLD__innodb_strict_mode
+          - MYSQLD__default-time-zone
+          - MYSQLD__default-character-set
+          - MYSQLD__default-collation
+          - MYSQLD__init_connect
+      expose:
+        - '3306'
+      volumes:
+        - "${PWD}/.docker/volume/db:/var/lib/mysql"    
