@@ -15,6 +15,7 @@ WORKDIR /opt/microservices
 COPY .docker/productpage/requirements.txt /opt/microservices/
 RUN pip install -r requirements.txt
 
+COPY .docker/productpage/lib /opt/microservices/lib/
 COPY .docker/productpage/productpage.py /opt/microservices/
 
 RUN chown -R 1000:1000 /opt/microservices
