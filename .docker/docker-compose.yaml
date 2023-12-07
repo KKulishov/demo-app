@@ -81,3 +81,55 @@ services:
         - '3306'
       volumes:
         - "${PWD}/.docker/volume/db:/var/lib/mysql"    
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+    networks:
+      dl_default: {}
+      default:
+        aliases:
+          - ${NETWORK_NAME}   
+  opentelemetry-collector:
+    image: otel/opentelemetry-collector-contrib:0.42.0
+    container_name: opentelemetry-collector
+    volumes:
+      - "${PWD}/.docker/opentelemetry/config/config.yml:/etc/opentelemetry-collector.yml"
+    command:
+      - "--config=/etc/opentelemetry-collector.yml"
+    depends_on:
+      - jaeger  
+    networks:
+      dl_default: {}
+      default:
+        aliases:
+          - ${NETWORK_NAME}           
+  test-app:
+    build:
+      context: $PWD
+      dockerfile: .docker/test-app/Dockerfile
+    image: test-app:0.1
+    restart: always
+    ports:
+      - 8080
+    environment:
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://opentelemetry-collector:4318/v1/traces"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "opentelemetry-collector:4317"
+      OTEL_EXPORTER_OTLP_INSECURE: "true"
+      OTEL_TRACES_EXPORTER: "otlp_proto_grpc"
+      OTEL_SERVICE_NAME: "test-app"
+      OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: "http/protobuf"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.routers.frontend.rule=Host(`test-app.localhost`) || HostRegexp(`test-app.{ip:.*}.nip.io`)"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8080"    
+      - "traefik.docker.network=dl_default"
+    networks:
+      dl_default: {}
+      default:
+        aliases:
+          - ${NETWORK_NAME}  
