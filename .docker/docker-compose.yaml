@@ -92,7 +92,7 @@ services:
         aliases:
           - ${NETWORK_NAME}   
   opentelemetry-collector:
-    image: otel/opentelemetry-collector-contrib:0.42.0
+    image: otel/opentelemetry-collector-contrib:0.52.0
     container_name: opentelemetry-collector
     volumes:
       - "${PWD}/.docker/opentelemetry/config/config.yml:/etc/opentelemetry-collector.yml"
@@ -122,11 +122,15 @@ services:
       OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: "http/protobuf"
       OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
       OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED: "true"
+      DJANGO_SETTINGS_MODULE: "otel_django.settings"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=test-app"
+    volumes:
+      - "${PWD}/.docker/test-app:/app/lib"  
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.entrypoints=web"
-      - "traefik.http.routers.frontend.rule=Host(`test-app.localhost`) || HostRegexp(`test-app.{ip:.*}.nip.io`)"
-      - "traefik.http.services.frontend.loadbalancer.server.port=8080"    
+      - "traefik.http.routers.test-app.entrypoints=web"
+      - "traefik.http.routers.test-app.rule=Host(`test-app.localhost`) || HostRegexp(`test-app.{ip:.*}.nip.io`)"
+      - "traefik.http.services.test-app.loadbalancer.server.port=8080"    
       - "traefik.docker.network=dl_default"
     networks:
       dl_default: {}

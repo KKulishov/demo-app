@@ -1,3 +1,16 @@
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/hello/<name>')
+def hello(name):
+    return 'Hello, {}!'.format(name)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+
+
+'''
 # These are the necessary import declarations
 from opentelemetry import trace
 from opentelemetry import metrics
@@ -38,3 +51,4 @@ def roll_dice():
 
 def roll():
     return randint(1, 6)
+'''    
