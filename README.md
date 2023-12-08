@@ -43,3 +43,16 @@ https://bookinfo-k8s-test.sovcombank.group/mysql-read
 
 ## todo тупикоый сервис к которому обращается сервис но он не отвечает 
 
+
+## primer 
+https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/recommendationservice/Dockerfile
+https://github.com/open-telemetry/opentelemetry-demo/tree/main
+https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-flask
+
+https://opentelemetry.io/docs/instrumentation/python/automatic/agent-config/
+https://opentelemetry.io/docs/instrumentation/python/automatic/
+
+https://scoutapm.com/blog/configuring-opentelemetry-python
+## operator
+https://opentelemetry.io/docs/kubernetes/operator/
+https://www.infracloud.io/blogs/opentelemetry-auto-instrumentation-jaeger/

@@ -17,7 +17,9 @@ RUN mkdir -p /app/lib
 
 WORKDIR /app/lib
 
-RUN pip install flask opentelemetry-distro opentelemetry-exporter-otlp && opentelemetry-bootstrap -a install
+#RUN apt update && apt install -y python3-dev && apt install -y build-essential
+
+RUN pip install flask opentelemetry-distro opentelemetry-exporter-otlp opentelemetry-instrumentation-flask && opentelemetry-bootstrap -a install
 
 COPY .docker/test-app/*.py /app/lib/
 
@@ -25,6 +27,7 @@ COPY .docker/test-app/entrypoint.sh /app/lib/
 
 RUN chown -R python:python /app
 
-ENTRYPOINT ["/app/lib/entrypoint.sh"]
+ENTRYPOINT [ "opentelemetry-instrument", "python", "app.py" ]
+#ENTRYPOINT ["/app/lib/entrypoint.sh"]
 
 USER python
