@@ -1,3 +1,5 @@
 .git
 .docker/volume/*
+.docker/volume/pgdata
 .docker/*/__pycache__/*
+.docker/volume

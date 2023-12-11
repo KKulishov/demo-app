@@ -9,6 +9,9 @@ FROM docker.io/istio/examples-bookinfo-productpage-v1:1.17.0
 
 USER root
 
+RUN groupadd -g 1000 python
+RUN useradd -s /bin/bash -g python -u 1000 -g 1000 python
+
 WORKDIR /opt/microservices
 
 #RUN pip3 install opentelemetry-distro opentelemetry-exporter-otlp && opentelemetry-bootstrap -a install

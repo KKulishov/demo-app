@@ -35,6 +35,7 @@ import os
 import asyncio
 import redis
 import mysql.connector
+import psycopg2
 
 # These two lines enable debugging at httplib level (requests->urllib3->http.client)
 # You will see the REQUEST, including HEADERS and DATA, and RESPONSE with HEADERS but without DATA.
@@ -63,6 +64,12 @@ MYSQL_HOST = os.getenv("MYSQL_HOST")
 MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
 MYSQL_USER = os.getenv("MYSQL_USER")
 MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
+
+## postgresql 
+POSTGRES_HOST = os.getenv("POSTGRES_HOST")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+POSTGRES_USER = os.getenv("POSTGRES_USER")
+POSTGRES_DB = os.getenv("POSTGRES_DB")
 
 # Set the secret key to some random bytes. Keep this really secret!
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -287,7 +294,7 @@ def health():
 TODO add redis 
 '''
 
-@app.route('/redis-write')
+@app.route('/redis-set')
 def write_to_redis():
     # Подключаемся к Redis
     r = redis.StrictRedis(host=HOST_REDIS, port=6379, password=REDIS_PASS, decode_responses=True)
@@ -303,7 +310,7 @@ def write_to_redis():
 
     return 'redis data send'    
 
-@app.route('/redis-read')
+@app.route('/redis-get')
 def read_from_redis():
     # Подключаемся к Redis
     r = redis.StrictRedis(host=HOST_REDIS, port=6379, password=REDIS_PASS, decode_responses=True)
@@ -323,12 +330,66 @@ def read_from_redis():
     return  result
 
 ################
+@app.route('/postgre-set')
+def postgre_set():
+    dbconnect = psycopg2.connect(**{
+        "dbname": POSTGRES_DB,
+        "user": POSTGRES_USER,
+        "password": POSTGRES_PASSWORD,
+        "host": POSTGRES_HOST,
+        "port": "5432",
+    })
+
+    data_to_insert = [
+        ('test1', 1),
+        ('test2', 2),
+        # Другие данные...
+    ]
+    
+    with dbconnect.cursor() as cursors:
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS test (
+            id SERIAL PRIMARY KEY,
+            column_name1 VARCHAR(255),
+            column_name2 INTEGER
+        )
+        """
+        cursors.execute(create_table_query)
+        dbconnect.commit()
+        
+    try:
+        cursor = dbconnect.cursor()
+        insert_query = 'INSERT INTO test (column_name1, column_name2) VALUES (%s, %s)'
+        cursor.executemany(insert_query, data_to_insert)
+        dbconnect.commit()
+    finally:
+        cursor.close()
+        dbconnect.close()    
+
+    return 'postgres send db'
+
+@app.route('/postgre-get')
+def postgre_get():
+    dbconnect = psycopg2.connect(**{
+        "dbname": POSTGRES_DB,
+        "user": POSTGRES_USER,
+        "password": POSTGRES_PASSWORD,
+        "host": POSTGRES_HOST,
+        "port": "5432",
+    })
+
+    with dbconnect.cursor() as cursor:
+        select_query = """
+        SELECT * FROM test
+        """
+        cursor.execute(select_query)
+        rows = cursor.fetchall()
+         # Преобразуем данные в список словарей
+        data = [{'column_name1': row[0], 'column_name2': row[1], 'column_name3': row[2]} for row in rows]
+    # Возвращаем данные в формате JSON
+    return jsonify(data)
 
 ################
-'''
-TODO add mysql 
-'''
-
 @app.route('/mysql-set')
 def mysql_set():
     dbconnect = mysql.connector.connect(
@@ -367,7 +428,7 @@ def mysql_set():
 
     return 'mysql send db'
 
-@app.route('/mysql-read')
+@app.route('/mysql-get')
 def mysql_read():
     dbconnect = mysql.connector.connect(
         host=MYSQL_HOST,
@@ -383,8 +444,9 @@ def mysql_read():
         """
         cursor.execute(select_query)
         rows = cursor.fetchall()
+         # Преобразуем данные в список словарей
         data = [{'column_name1': row[0], 'column_name2': row[1], 'column_name3': row[2]} for row in rows]
-
+    # Возвращаем данные в формате JSON
     return jsonify(data)
 
 

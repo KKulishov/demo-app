@@ -2,3 +2,4 @@ opentelemetry-distro
 opentelemetry-exporter-otlp
 redis
 mysql-connector-python
+psycopg2-binary

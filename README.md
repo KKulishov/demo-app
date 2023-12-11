@@ -30,14 +30,16 @@ https://bookinfo-k8s-test.sovcombank.group/api/v1/products/82344/reviews
 https://bookinfo-k8s-test.sovcombank.group/api/v1/products/32
 https://bookinfo-k8s-test.sovcombank.group/api/v1/products/82344/ratings
 ## redis
-https://bookinfo-k8s-test.sovcombank.group/redis-write
-https://bookinfo-k8s-test.sovcombank.group/redis-read
+https://bookinfo-k8s-test.sovcombank.group/redis-set
+https://bookinfo-k8s-test.sovcombank.group/redis-get
 ## mysql 
 https://bookinfo-k8s-test.sovcombank.group/mysql-set
-https://bookinfo-k8s-test.sovcombank.group/mysql-read
+https://bookinfo-k8s-test.sovcombank.group/mysql-get
 
 
 ## todo add postgesql
+https://bookinfo-k8s-test.sovcombank.group/postgre-set
+https://bookinfo-k8s-test.sovcombank.group/postgre-get
 
 ## todo add proxysql
 

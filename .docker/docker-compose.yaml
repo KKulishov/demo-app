@@ -25,6 +25,10 @@ services:
       - MYSQL_USER
       - MYSQL_PASSWORD
       - MYSQL_HOST
+      - POSTGRES_DB
+      - POSTGRES_HOST
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     volumes:
       - "${PWD}/.docker/productpage/productpage.py:/opt/microservices/productpage.py" 
     labels:
@@ -109,6 +113,22 @@ services:
       default:
         aliases:
           - ${NETWORK_NAME}           
+  postgres:
+    image: postgres:14.10-bullseye
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgres 
+      - POSTGRES_USER=user
+      - TZ=Europe/Moscow
+      - PGTZ=Europe/Moscow  
+    volumes: 
+      - "${PWD}/.docker/volume/pgdata:/var/lib/postgresql/data/pgdata"
+    ports:
+      - 5432  
   test-app:
     build:
       context: $PWD
