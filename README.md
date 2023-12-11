@@ -36,7 +36,6 @@ https://bookinfo-k8s-test.sovcombank.group/redis-get
 https://bookinfo-k8s-test.sovcombank.group/mysql-set
 https://bookinfo-k8s-test.sovcombank.group/mysql-get
 
-
 ## todo add postgesql
 https://bookinfo-k8s-test.sovcombank.group/postgre-set
 https://bookinfo-k8s-test.sovcombank.group/postgre-get
@@ -45,6 +44,8 @@ https://bookinfo-k8s-test.sovcombank.group/postgre-get
 
 ## todo тупикоый сервис к которому обращается сервис но он не отвечает 
 
+
+## передалть .kube на helm chart 
 
 ## primer 
 https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/recommendationservice/Dockerfile
