@@ -23,9 +23,10 @@ COPY .docker/productpage/productpage.py /opt/microservices/
 
 RUN chown -R 1000:1000 /opt/microservices
 
-COPY .docker/productpage/entrypoint.sh /entrypoint.sh 
+COPY .docker/productpage/entrypoint.sh /opt/microservices/entrypoint.sh 
 
+RUN chown -R 1000:1000 /opt/microservices/entrypoint.sh && chmod +x /opt/microservices/entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/opt/microservices/entrypoint.sh"]
 
 USER 1000
